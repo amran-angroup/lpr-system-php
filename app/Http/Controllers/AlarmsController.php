@@ -22,7 +22,7 @@ class AlarmsController extends Controller
 
     public function list(Request $request)
     {
-        $perPage = $request->get('per_page', 15);
+        $perPage = $request->get('per_page', 150);
         $query = Alarms::query();
 
         // Search functionality

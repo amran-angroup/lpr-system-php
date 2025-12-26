@@ -42,8 +42,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AlarmsShow({ alarm }: AlarmsShowProps) {
     const formatDate = (timestamp: number) => {
-        // Convert timestamp (milliseconds) to Date and format in Malaysia timezone
-        const date = new Date(timestamp);
+        // The API timestamp is in milliseconds and represents Malaysia local time
+        // JavaScript Date interprets timestamps as UTC, so we need to adjust
+        // by subtracting 8 hours (28800000 ms) to account for Malaysia timezone (UTC+8)
+        const malaysiaOffset = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
+        const adjustedTimestamp = timestamp - malaysiaOffset;
+        const date = new Date(adjustedTimestamp);
         return date.toLocaleString('en-MY', {
             timeZone: 'Asia/Kuala_Lumpur',
             year: 'numeric',
