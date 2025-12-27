@@ -4,10 +4,14 @@ use App\Http\Controllers\AlarmsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ImageProcessingController;
 use App\Http\Controllers\OcrController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\VehicleLogsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+
+Route::get('test', [TestController::class, 'index'])->name('test.index');
+
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
