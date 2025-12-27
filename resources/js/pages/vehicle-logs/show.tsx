@@ -94,7 +94,12 @@ export default function VehicleLogsShow({ vehicleLog }: VehicleLogsShowProps) {
                         {vehicleLog.image_path ? (
                             <div className="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
                                 <img
-                                    src={vehicleLog.image_path}
+                                    src={
+                                        // Check if image_path is base64 (long string without http/https)
+                                        vehicleLog.image_path && !vehicleLog.image_path.startsWith('http') && !vehicleLog.image_path.startsWith('/')
+                                            ? `data:image/jpeg;base64,${vehicleLog.image_path}`
+                                            : vehicleLog.image_path
+                                    }
                                     alt={`Vehicle log ${vehicleLog.id}`}
                                     className="w-full h-auto object-contain"
                                 />

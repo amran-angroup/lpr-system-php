@@ -184,10 +184,16 @@ export default function VehicleLogsIndex({ vehicleLogs }: VehicleLogsIndexProps)
                         {
                             header: 'Image',
                             accessorKey: 'image_path',
-                            cell: (row) =>
-                                row.image_path ? (
+                            cell: (row) => {
+                                // Check if image_path is base64 (long string without http/https)
+                                const isBase64 = row.image_path && !row.image_path.startsWith('http') && !row.image_path.startsWith('/');
+                                const imageSrc = isBase64 
+                                    ? `data:image/jpeg;base64,${row.image_path}`
+                                    : row.image_path;
+                                
+                                return imageSrc ? (
                                     <img
-                                        src={row.image_path}
+                                        src={imageSrc}
                                         alt={`Vehicle log ${row.id}`}
                                         className="h-16 w-16 rounded object-cover"
                                     />
@@ -199,7 +205,8 @@ export default function VehicleLogsIndex({ vehicleLogs }: VehicleLogsIndexProps)
                                     />
                                 ) : (
                                     <span className="text-muted-foreground">No image</span>
-                                ),
+                                );
+                            },
                         },
                         {
                             header: 'Action',

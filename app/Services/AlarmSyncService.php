@@ -167,9 +167,9 @@ class AlarmSyncService
 
             Log::info("    ✓ Alarm ID {$alarm->alarmId}: Image downloaded successfully");
 
-            // Save image to storage
-            $imagePath = $this->saveImageToStorage($imageContent, $alarm->id);
-            Log::info("    ✓ Alarm ID {$alarm->alarmId}: Image saved to storage: {$imagePath}");
+            // Convert image to base64 for database storage
+            $imageBase64 = base64_encode($imageContent);
+            Log::info("    ✓ Alarm ID {$alarm->alarmId}: Image converted to base64");
 
             // Save image temporarily for API call
             $tempPath = storage_path('app/temp/' . uniqid('alarm_', true) . '.jpg');
@@ -217,7 +217,7 @@ class AlarmSyncService
                 'alarm_id' => $alarm->id,
                 'gate_id' => null,
                 'timestamp' => $timestamp,
-                'image_path' => $imagePath,
+                'image_path' => $imageBase64, // Store base64 directly in image_path
                 'direction' => $result['direction'] ?? 'in',
             ];
 
