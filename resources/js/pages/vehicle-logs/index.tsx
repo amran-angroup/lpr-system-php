@@ -73,17 +73,6 @@ export default function VehicleLogsIndex({ vehicleLogs }: VehicleLogsIndexProps)
         });
     };
 
-    const formatConfidence = (confidence: any): string => {
-        if (confidence === null || confidence === undefined) {
-            return 'N/A';
-        }
-        const num = typeof confidence === 'number' ? confidence : parseFloat(String(confidence));
-        if (isNaN(num) || !isFinite(num)) {
-            return 'N/A';
-        }
-        return `${num.toFixed(2)}%`;
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Vehicle Logs" />
@@ -115,49 +104,6 @@ export default function VehicleLogsIndex({ vehicleLogs }: VehicleLogsIndexProps)
                                     <span className="text-muted-foreground">N/A</span>
                                 ),
                         },
-                        // {
-                        //     header: 'Vehicle Type',
-                        //     accessorKey: 'vehicle_type',
-                        //     cell: (row) =>
-                        //         row.vehicle_type || (
-                        //             <span className="text-muted-foreground">N/A</span>
-                        //         ),
-                        // },
-                        // {
-                        //     header: 'Color',
-                        //     accessorKey: 'vehicle_color',
-                        //     cell: (row) =>
-                        //         row.vehicle_color || (
-                        //             <span className="text-muted-foreground">N/A</span>
-                        //         ),
-                        // },
-                        // {
-                        //     header: 'Direction',
-                        //     accessorKey: 'direction',
-                        //     cell: (row) => (
-                        //         <span
-                        //             className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                        //                 row.direction === 'in'
-                        //                     ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                        //                     : 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-                        //             }`}
-                        //         >
-                        //             {row.direction.toUpperCase()}
-                        //         </span>
-                        //     ),
-                        // },
-                        // {
-                        //     header: 'Confidence',
-                        //     accessorKey: 'confidence',
-                        //     cell: (row) => {
-                        //         const formatted = formatConfidence(row.confidence);
-                        //         return formatted === 'N/A' ? (
-                        //             <span className="text-muted-foreground">N/A</span>
-                        //         ) : (
-                        //             <span>{formatted}</span>
-                        //         );
-                        //     },
-                        // },
                         {
                             header: 'Gate ID',
                             accessorKey: 'gate_id',
@@ -185,27 +131,28 @@ export default function VehicleLogsIndex({ vehicleLogs }: VehicleLogsIndexProps)
                             header: 'Image',
                             accessorKey: 'image_path',
                             cell: (row) => {
-                                // Check if image_path is base64 (long string without http/https)
-                                const isBase64 = row.image_path && !row.image_path.startsWith('http') && !row.image_path.startsWith('/');
-                                const imageSrc = isBase64 
-                                    ? `data:image/jpeg;base64,${row.image_path}`
-                                    : row.image_path;
-                                
-                                return imageSrc ? (
-                                    <img
-                                        src={imageSrc}
-                                        alt={`Vehicle log ${row.id}`}
-                                        className="h-16 w-16 rounded object-cover"
-                                    />
-                                ) : row.plate_image_base64 ? (
-                                    <img
-                                        src={`data:image/png;base64,${row.plate_image_base64}`}
-                                        alt={`Plate ${row.id}`}
-                                        className="h-16 w-16 rounded object-cover"
-                                    />
-                                ) : (
-                                    <span className="text-muted-foreground">No image</span>
-                                );
+                                if (row.image_path) {
+                                    return (
+                                        <img
+                                            src={`data:image/jpeg;base64,${row.image_path}`}
+                                            alt={`Vehicle log ${row.id}`}
+                                            className="h-16 w-16 rounded object-cover"
+                                            onError={(e) => {
+                                                e.currentTarget.style.display = 'none';
+                                            }}
+                                        />
+                                    );
+                                }
+                                if (row.plate_image_base64) {
+                                    return (
+                                        <img
+                                            src={`data:image/png;base64,${row.plate_image_base64}`}
+                                            alt={`Plate ${row.id}`}
+                                            className="h-16 w-16 rounded object-cover"
+                                        />
+                                    );
+                                }
+                                return <span className="text-muted-foreground">No image</span>;
                             },
                         },
                         {

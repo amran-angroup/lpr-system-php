@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowDownCircle, ArrowUpCircle, Car } from 'lucide-react';
+import { ArrowDownCircle, ArrowUpCircle, Car, TrendingUp } from 'lucide-react';
 
 interface StatsCardsProps {
     uniquePlates: {
@@ -32,124 +32,85 @@ export function StatsCards({
     monthlyCounts,
 }: StatsCardsProps) {
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {/* Unique Plates In */}
-            <Card>
+            <Card className="border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-gray-800 dark:bg-gray-900">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                         Unique Plates (In)
                     </CardTitle>
-                    <ArrowDownCircle className="h-4 w-4 text-muted-foreground" />
+                    <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(5, 170, 155, 0.1)' }}>
+                        <ArrowDownCircle className="h-4 w-4" style={{ color: '#05aa9b' }} />
+                    </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{uniquePlates.in}</div>
-                    <p className="text-xs text-muted-foreground">
-                        Distinct vehicles entered
-                    </p>
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                        {uniquePlates.in}
+                    </div>
+                    <div className="mt-2 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                        <TrendingUp className="h-3 w-3" style={{ color: '#05aa9b' }} />
+                        <span>Increased from last month</span>
+                    </div>
                 </CardContent>
             </Card>
 
             {/* Unique Plates Out */}
-            <Card>
+            <Card className="border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-gray-800 dark:bg-gray-900">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                         Unique Plates (Out)
                     </CardTitle>
-                    <ArrowUpCircle className="h-4 w-4 text-muted-foreground" />
+                    <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(5, 170, 155, 0.1)' }}>
+                        <ArrowUpCircle className="h-4 w-4" style={{ color: '#05aa9b' }} />
+                    </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{uniquePlates.out}</div>
-                    <p className="text-xs text-muted-foreground">
-                        Distinct vehicles exited
-                    </p>
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                        {uniquePlates.out}
+                    </div>
+                    <div className="mt-2 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                        <TrendingUp className="h-3 w-3" style={{ color: '#05aa9b' }} />
+                        <span>Increased from last month</span>
+                    </div>
                 </CardContent>
             </Card>
 
-            {/* Daily Counts */}
-            <Card>
+            {/* Daily Activity */}
+            <Card className="border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-gray-800 dark:bg-gray-900">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                         Daily Activity
                     </CardTitle>
-                    <Car className="h-4 w-4 text-muted-foreground" />
+                    <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(5, 170, 155, 0.1)' }}>
+                        <Car className="h-4 w-4" style={{ color: '#05aa9b' }} />
+                    </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
                         {dailyCounts.in + dailyCounts.out}
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                        <span className="text-blue-600 dark:text-blue-400">
-                            {dailyCounts.in} in
-                        </span>
-                        {' / '}
-                        <span className="text-orange-600 dark:text-orange-400">
-                            {dailyCounts.out} out
-                        </span>
-                    </p>
-                </CardContent>
-            </Card>
-
-            {/* Weekly Counts */}
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                        Weekly Activity
-                    </CardTitle>
-                    <Car className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">
-                        {weeklyCounts.in + weeklyCounts.out}
+                    <div className="mt-2 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                        <TrendingUp className="h-3 w-3" style={{ color: '#05aa9b' }} />
+                        <span>Increased from last month</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                        <span className="text-blue-600 dark:text-blue-400">
-                            {weeklyCounts.in} in
-                        </span>
-                        {' / '}
-                        <span className="text-orange-600 dark:text-orange-400">
-                            {weeklyCounts.out} out
-                        </span>
-                    </p>
-                </CardContent>
-            </Card>
-
-            {/* Monthly Counts */}
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                        Monthly Activity
-                    </CardTitle>
-                    <Car className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">
-                        {monthlyCounts.in + monthlyCounts.out}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                        <span className="text-blue-600 dark:text-blue-400">
-                            {monthlyCounts.in} in
-                        </span>
-                        {' / '}
-                        <span className="text-orange-600 dark:text-orange-400">
-                            {monthlyCounts.out} out
-                        </span>
-                    </p>
                 </CardContent>
             </Card>
 
             {/* Total Counts */}
-            <Card>
+            <Card className="border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-gray-800 dark:bg-gray-900">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                         Total (Period)
                     </CardTitle>
-                    <Car className="h-4 w-4 text-muted-foreground" />
+                    <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(5, 170, 155, 0.1)' }}>
+                        <Car className="h-4 w-4" style={{ color: '#05aa9b' }} />
+                    </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
                         {totalCounts.in + totalCounts.out}
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                         <span className="text-blue-600 dark:text-blue-400">
                             {totalCounts.in} in
                         </span>

@@ -62,17 +62,6 @@ export default function VehicleLogsShow({ vehicleLog }: VehicleLogsShowProps) {
         });
     };
 
-    const formatConfidence = (confidence: any): string => {
-        if (confidence === null || confidence === undefined) {
-            return 'N/A';
-        }
-        const num = typeof confidence === 'number' ? confidence : parseFloat(String(confidence));
-        if (isNaN(num) || !isFinite(num)) {
-            return 'N/A';
-        }
-        return `${num.toFixed(2)}%`;
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Vehicle Log ${vehicleLog.id}`} />
@@ -94,14 +83,12 @@ export default function VehicleLogsShow({ vehicleLog }: VehicleLogsShowProps) {
                         {vehicleLog.image_path ? (
                             <div className="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
                                 <img
-                                    src={
-                                        // Check if image_path is base64 (long string without http/https)
-                                        vehicleLog.image_path && !vehicleLog.image_path.startsWith('http') && !vehicleLog.image_path.startsWith('/')
-                                            ? `data:image/jpeg;base64,${vehicleLog.image_path}`
-                                            : vehicleLog.image_path
-                                    }
+                                    src={`data:image/jpeg;base64,${vehicleLog.image_path}`}
                                     alt={`Vehicle log ${vehicleLog.id}`}
                                     className="w-full h-auto object-contain"
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                    }}
                                 />
                             </div>
                         ) : vehicleLog.plate_image_base64 ? (
@@ -193,11 +180,18 @@ export default function VehicleLogsShow({ vehicleLog }: VehicleLogsShowProps) {
                                 <div className="px-4 py-3">
                                     <div className="text-sm font-medium text-muted-foreground">Confidence</div>
                                     <div className="mt-1 text-sm">
-                                        {formatConfidence(vehicleLog.confidence) === 'N/A' ? (
+                                        {vehicleLog.confidence === null || vehicleLog.confidence === undefined ? (
                                             <span className="text-muted-foreground">N/A</span>
-                                        ) : (
-                                            <span>{formatConfidence(vehicleLog.confidence)}</span>
-                                        )}
+                                        ) : (() => {
+                                            const num = typeof vehicleLog.confidence === 'number' 
+                                                ? vehicleLog.confidence 
+                                                : parseFloat(String(vehicleLog.confidence));
+                                            return isNaN(num) || !isFinite(num) ? (
+                                                <span className="text-muted-foreground">N/A</span>
+                                            ) : (
+                                                <span>{num.toFixed(2)}%</span>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
                                 <div className="px-4 py-3">

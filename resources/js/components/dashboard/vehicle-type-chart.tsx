@@ -3,13 +3,6 @@
 import * as React from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, XAxis, YAxis } from 'recharts';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import {
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
@@ -48,14 +41,16 @@ export function VehicleTypeChart({ data }: VehicleTypeChartProps) {
     }, [data]);
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Vehicle Type Distribution</CardTitle>
-                <CardDescription>
+        <div className="flex flex-col h-full">
+            <div className="px-6 pt-6 pb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Vehicle Type Distribution
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     Breakdown of vehicles by type category
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
+                </p>
+            </div>
+            <div className="flex-1 px-6 pb-6">
                 <ChartContainer config={chartConfig} className="h-[400px] w-full">
                     <BarChart
                         accessibilityLayer
@@ -102,8 +97,8 @@ export function VehicleTypeChart({ data }: VehicleTypeChartProps) {
                         />
                     </BarChart>
                 </ChartContainer>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }
 
