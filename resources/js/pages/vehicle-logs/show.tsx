@@ -106,7 +106,7 @@ export default function VehicleLogsShow({ vehicleLog }: VehicleLogsShowProps) {
                         )}
                         
                         {/* Cropped Plate Image */}
-                        {vehicleLog.cropped_image_path && (
+                        {/* {vehicleLog.cropped_image_path && (
                             <div className="space-y-2">
                                 <h3 className="text-md font-semibold">Cropped License Plate</h3>
                                 <div className="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
@@ -123,7 +123,7 @@ export default function VehicleLogsShow({ vehicleLog }: VehicleLogsShowProps) {
                                     />
                                 </div>
                             </div>
-                        )}
+                        )} */}
                     </div>
 
                     {/* Details Section */}

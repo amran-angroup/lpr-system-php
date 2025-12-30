@@ -104,7 +104,7 @@ export default function Dashboard({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard - License Plate Recognition System" />
-            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto bg-gray-50 p-6 dark:bg-gray-950">
+            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto  p-6 ">
                 {/* Header Section */}
                 <div className="flex flex-col gap-2">
                     <div>

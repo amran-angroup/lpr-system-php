@@ -34,7 +34,7 @@ export function StatsCards({
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {/* Unique Plates In */}
-            <Card className="border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-gray-800 dark:bg-gray-900">
+            <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                         Unique Plates (In)
@@ -55,7 +55,7 @@ export function StatsCards({
             </Card>
 
             {/* Unique Plates Out */}
-            <Card className="border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-gray-800 dark:bg-gray-900">
+            <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                         Unique Plates (Out)
@@ -76,7 +76,7 @@ export function StatsCards({
             </Card>
 
             {/* Daily Activity */}
-            <Card className="border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-gray-800 dark:bg-gray-900">
+            <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                         Daily Activity
@@ -97,7 +97,7 @@ export function StatsCards({
             </Card>
 
             {/* Total Counts */}
-            <Card className="border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-gray-800 dark:bg-gray-900">
+            <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                         Total (Period)
