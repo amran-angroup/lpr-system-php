@@ -49,6 +49,9 @@ COPY . .
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+# Generate autoloader first (needed for artisan commands)
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
+
 # Set a temporary APP_KEY for build (wayfinder needs Laravel to bootstrap)
 # Create minimal .env if it doesn't exist
 RUN if [ ! -f .env ]; then \
@@ -59,9 +62,6 @@ RUN if [ ! -f .env ]; then \
 # Install Node.js dependencies and build frontend assets
 # (Wayfinder needs Laravel to be available, so we build here)
 RUN npm ci && npm run build
-
-# Complete Composer setup
-RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
