@@ -50,8 +50,7 @@ README.md
 .editorconfig
 .eslintrc*
 .prettierrc*
-tsconfig.json
-vite.config.ts
+# tsconfig.json and vite.config.ts are needed for frontend build
 
 # Python (if not needed in production)
 __pycache__
