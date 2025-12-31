@@ -35,7 +35,6 @@ Before deploying, you'll need to set up the following environment variables in R
 - `LOG_LEVEL` - Set to `error` or `warning` for production
 - `SESSION_DRIVER` - Set to `database` or `redis` (if using Redis)
 - `CACHE_DRIVER` - Set to `database` or `redis` (if using Redis)
-- `QUEUE_CONNECTION` - Set to `database` or `redis` (if using Redis)
 
 ## Step 2: Deploy to Render
 
@@ -146,22 +145,6 @@ The Dockerfile includes:
 - Optimized autoloader
 - Cached configuration, routes, and views
 - Gzip compression in Nginx
-
-### Queue Workers
-
-If you need queue workers, create a separate Background Worker service in Render:
-1. Click "New" → "Background Worker"
-2. Use the same Dockerfile
-3. Set start command: `php artisan queue:work`
-4. Use the same environment variables
-
-### Scheduled Tasks
-
-For Laravel scheduled tasks, use Render's Cron Jobs:
-1. Click "New" → "Cron Job"
-2. Set schedule (e.g., `*/5 * * * *` for every 5 minutes)
-3. Set command: `php artisan schedule:run`
-4. Use the same Dockerfile and environment variables
 
 ## Local Testing
 

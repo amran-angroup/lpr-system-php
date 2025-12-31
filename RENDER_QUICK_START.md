@@ -27,7 +27,7 @@ In your Web Service settings, add these environment variables:
 APP_NAME=LPR System
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://your-app-name.onrender.com
+APP_URL=https://lpr-system.onrender.com
 LOG_CHANNEL=stderr
 LOG_LEVEL=error
 
@@ -40,10 +40,11 @@ DB_PASSWORD=<from-database-settings>
 
 SESSION_DRIVER=database
 CACHE_DRIVER=database
-QUEUE_CONNECTION=database
 ```
 
-**Note**: Don't set `APP_KEY` - it will be auto-generated on first deploy.
+**Important**: 
+- Don't set `APP_KEY` - it will be auto-generated on first deploy.
+- Make sure `APP_URL` uses **HTTPS** (not HTTP) - this is required for assets to load correctly.
 
 ## 4. Deploy
 
@@ -64,22 +65,5 @@ QUEUE_CONNECTION=database
 - **App won't start**: Check environment variables and logs
 - **Database errors**: Verify DB credentials and that database is running
 - **Assets missing**: Check that `npm run build` completed in build logs
-
-## Optional: Queue Worker
-
-If you use queues, create a Background Worker:
-
-1. New → Background Worker
-2. Same repo and Dockerfile
-3. Start Command: `php artisan queue:work --tries=3`
-4. Same environment variables
-
-## Optional: Scheduled Tasks
-
-For Laravel scheduler:
-
-1. New → Cron Job
-2. Schedule: `*/5 * * * *` (every 5 minutes)
-3. Command: `php artisan schedule:run`
-4. Same Dockerfile and environment variables
+- **Mixed Content errors (HTTPS/HTTP)**: Ensure `APP_URL` is set to HTTPS (e.g., `https://lpr-system.onrender.com`). The application automatically forces HTTPS URLs in production.
 

@@ -35,10 +35,6 @@ return [
         ],
     ],
 
-    'image_processing' => [
-        'url' => env('IMAGE_PROCESSING_API_URL', 'http://127.0.0.1:8080/api/process-image'),
-    ],
-
     'roboflow' => [
         'api_key' => env('ROBOFLOW_API_KEY', 'IFhB8mhN7wQPMUvnSXf6'),
         'model_url' => env('ROBOFLOW_MODEL_URL', 'https://serverless.roboflow.com/license-plate-recognition-rxg4e/11'),

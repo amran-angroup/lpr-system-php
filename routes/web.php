@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AlarmsController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ImageProcessingController;
 use App\Http\Controllers\OcrController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\VehicleLogsController;
@@ -35,9 +34,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ocr/{id}', [OcrController::class, 'show'])->name('ocr.show');
     Route::post('ocr/{id}/save', [OcrController::class, 'saveResult'])->name('ocr.save');
 });
-
-// API Routes
-Route::post('api/process-image', [ImageProcessingController::class, 'processImage'])->name('api.process-image');
 
 require __DIR__.'/auth.php';
 require __DIR__.'/settings.php';
