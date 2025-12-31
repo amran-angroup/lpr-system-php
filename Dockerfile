@@ -50,7 +50,11 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Set a temporary APP_KEY for build (wayfinder needs Laravel to bootstrap)
-RUN php artisan key:generate --show || echo "APP_KEY=base64:$(openssl rand -base64 32)=" > .env
+# Create minimal .env if it doesn't exist
+RUN if [ ! -f .env ]; then \
+    php artisan key:generate --force || \
+    echo "APP_KEY=base64:$(php -r 'echo base64_encode(random_bytes(32));')=" > .env; \
+    fi
 
 # Install Node.js dependencies and build frontend assets
 # (Wayfinder needs Laravel to be available, so we build here)
