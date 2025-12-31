@@ -13,6 +13,7 @@ RUN npm ci
 
 # Copy frontend source files
 COPY resources ./resources
+COPY routes ./routes
 COPY vite.config.ts ./
 COPY tsconfig.json ./
 COPY components.json ./
@@ -36,6 +37,7 @@ RUN apk add --no-cache \
     oniguruma-dev \
     postgresql-dev \
     sqlite \
+    sqlite-dev \
     && docker-php-ext-install \
     pdo \
     pdo_pgsql \
@@ -98,6 +100,7 @@ RUN apk add --no-cache --virtual .build-deps \
     libzip-dev \
     oniguruma-dev \
     postgresql-dev \
+    sqlite-dev \
     && docker-php-ext-install \
     pdo \
     pdo_pgsql \
