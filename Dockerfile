@@ -1,32 +1,9 @@
 # Multi-stage Dockerfile for Laravel application
 
-# Stage 1: Build frontend assets
-FROM node:20-alpine AS frontend-builder
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci
-
-# Copy frontend source files
-COPY resources ./resources
-COPY routes ./routes
-COPY vite.config.ts ./
-COPY tsconfig.json ./
-COPY components.json ./
-COPY tailwind.config.js* ./
-COPY postcss.config.js* ./
-
-# Build frontend assets
-RUN npm run build
-
-# Stage 2: PHP base image with extensions
+# Stage 1: PHP base image with extensions and Node.js for frontend build
 FROM php:8.2-fpm-alpine AS php-base
 
-# Install system dependencies and PHP extensions
+# Install system dependencies, PHP extensions, and Node.js
 RUN apk add --no-cache \
     git \
     curl \
@@ -38,6 +15,8 @@ RUN apk add --no-cache \
     postgresql-dev \
     sqlite \
     sqlite-dev \
+    nodejs \
+    npm \
     && docker-php-ext-install \
     pdo \
     pdo_pgsql \
@@ -70,8 +49,12 @@ COPY . .
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Copy built frontend assets from frontend-builder stage
-COPY --from=frontend-builder /app/public/build ./public/build
+# Set a temporary APP_KEY for build (wayfinder needs Laravel to bootstrap)
+RUN php artisan key:generate --show || echo "APP_KEY=base64:$(openssl rand -base64 32)=" > .env
+
+# Install Node.js dependencies and build frontend assets
+# (Wayfinder needs Laravel to be available, so we build here)
+RUN npm ci && npm run build
 
 # Complete Composer setup
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
