@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules
+vendor
+
+# Build artifacts
+public/build
+public/hot
+public/storage
+storage/*.key
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+storage/logs/*
+!storage/logs/.gitkeep
+
+# Testing
+.phpunit.result.cache
+coverage
+tests
+
+# Misc
+README.md
+.editorconfig
+.eslintrc*
+.prettierrc*
+tsconfig.json
+vite.config.ts
+
+# Python (if not needed in production)
+__pycache__
+*.pyc
+text_ocr.py
+requirements.txt
+
+# Scripts
+*.bat
+*.ps1
+*.sh
+

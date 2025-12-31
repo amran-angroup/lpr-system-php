@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: lpr-system-php
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    region: oregon
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
+    buildCommand: ""
+    startCommand: ""
+    healthCheckPath: /
+    autoDeploy: true
+
+databases:
+  - name: lpr-system-db
+    plan: starter
+    databaseName: lpr_system
+    user: lpr_system_user
+
