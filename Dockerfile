@@ -102,10 +102,12 @@ RUN apk add --no-cache --virtual .build-deps \
     opcache \
     && apk del .build-deps
 
-# Configure PHP-FPM
-RUN sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm.sock/' /usr/local/etc/php-fpm.d/www.conf \
+# Create socket directory and configure PHP-FPM
+RUN mkdir -p /var/run \
+    && sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm.sock/' /usr/local/etc/php-fpm.d/www.conf \
     && sed -i 's/;listen.owner = www-data/listen.owner = www-data/' /usr/local/etc/php-fpm.d/www.conf \
     && sed -i 's/;listen.group = www-data/listen.group = www-data/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/;listen.mode = 0660/listen.mode = 0660/' /usr/local/etc/php-fpm.d/www.conf \
     && sed -i 's/user = www-data/user = www-data/' /usr/local/etc/php-fpm.d/www.conf \
     && sed -i 's/group = www-data/group = www-data/' /usr/local/etc/php-fpm.d/www.conf
 
@@ -128,13 +130,17 @@ WORKDIR /var/www/html
 # Copy nginx configuration
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 
-# Copy supervisor configuration
+# Copy supervisor configuration and wait script
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/wait-for-php-fpm.sh /usr/local/bin/wait-for-php-fpm.sh
+RUN chmod +x /usr/local/bin/wait-for-php-fpm.sh
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
+# Set permissions and ensure socket directory exists
+RUN mkdir -p /var/run \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && chown www-data:www-data /var/run
 
 # Expose port
 EXPOSE 8000
