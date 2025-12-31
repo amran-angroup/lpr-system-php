@@ -64,6 +64,10 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --optim
 # Copy application code
 COPY . .
 
+# Copy entrypoint script (needed in final stage)
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Copy built frontend assets from frontend-builder stage
 COPY --from=frontend-builder /app/public/build ./public/build
 
@@ -125,6 +129,7 @@ RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
 
 # Copy application from php-base stage
 COPY --from=php-base /var/www/html /var/www/html
+COPY --from=php-base /usr/local/bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
@@ -135,10 +140,6 @@ COPY docker/nginx.conf /etc/nginx/nginx.conf
 
 # Copy supervisor configuration
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Copy entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
