@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowDownCircle, ArrowUpCircle, Car, TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ArrowDownCircle, ArrowUpCircle, Car, TrendingUp, TrendingDown, Activity, Users } from 'lucide-react';
 
 interface StatsCardsProps {
     uniquePlates: {
@@ -22,6 +22,11 @@ interface StatsCardsProps {
         in: number;
         out: number;
     };
+    changes?: {
+        uniquePlatesIn: number;
+        uniquePlatesOut: number;
+        totalCount: number;
+    };
 }
 
 export function StatsCards({
@@ -30,79 +35,165 @@ export function StatsCards({
     dailyCounts,
     weeklyCounts,
     monthlyCounts,
+    changes,
 }: StatsCardsProps) {
+    const formatNumber = (num: number) => {
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toLocaleString();
+    };
+
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {/* Vehicle Entries In */}
-            <Card className='bg-[#024741]'>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {/* Unique Plates In */}
+            <Card className="bg-card">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-white dark:text-white">
-                         Vehicle Entries (In)
-                    </CardTitle>
-                    <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(5, 170, 155, 0.1)' }}>
-                        <ArrowDownCircle className="h-5 w-5" style={{ color: '#ffffff' }} />
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <ArrowDownCircle className="h-5 w-5 text-primary" />
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-4xl font-bold text-white dark:text-white">
-                        {uniquePlates.in}
+                    <div className="text-2xl font-bold text-foreground">
+                        {formatNumber(uniquePlates.in)}
                     </div>
-                    <div className="mt-2 flex items-center gap-1 text-xs text-white">
-                        <TrendingUp className="h-4 w-4" style={{ color: '#ffffff' }} />
-                        <span>Increased from last month</span>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Vehicle Entries Out */} 
-            <Card className='bg-[#04786E]'>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-white dark:text-white">
-                        Vehicle Entries (Out)
-                    </CardTitle>
-                    <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(5, 170, 155, 0.1)' }}>
-                        <ArrowUpCircle className="h-5 w-5" style={{ color: '#ffffff' }} />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-4xl font-bold text-white dark:text-white">
-                        {uniquePlates.out}
-                    </div>
-                    <div className="mt-2 flex items-center gap-1 text-xs text-white">
-                        <TrendingUp className="h-4 w-4" style={{ color: '#ffffff' }} />
-                        <span>Increased from last month</span>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Daily Activity */} 
-            
-
-            {/* Total Counts */} 
-            <Card className='bg-[#05AA9B]'>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-white dark:text-white">
-                        Total (Period)
-                    </CardTitle>
-                    <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(5, 170, 155, 0.1)' }}>
-                        <Car className="h-5 w-5" style={{ color: '#ffffff' }} />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-4xl font-bold text-white dark:text-white">
-                        {totalCounts.in + totalCounts.out}
-                    </div>
-                    <p className="mt-2 text-xs text-white">
-                        <span className="text-white">
-                            {totalCounts.in} in
-                        </span>
-                        {' / '}
-                        <span className="text-white">
-                            {totalCounts.out} out
-                        </span>
+                    <p className="text-base font-medium text-foreground">
+                        Unique Plates (In)
                     </p>
+                    <div className="mt-3 flex items-center gap-1 text-xs">
+                        {changes && changes.uniquePlatesIn >= 0 ? (
+                            <>
+                                <TrendingUp className="h-3 w-3 text-primary" />
+                                <span className="text-foreground">
+                                    +{Math.abs(changes.uniquePlatesIn)}%
+                                </span>
+                            </>
+                        ) : changes ? (
+                            <>
+                                <TrendingDown className="h-3 w-3 text-destructive" />
+                                <span className="text-foreground">
+                                    {changes.uniquePlatesIn}%
+                                </span>
+                            </>
+                        ) : null}
+                    </div>
                 </CardContent>
             </Card>
+
+            {/* Unique Plates Out */}
+            <Card className="bg-card">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#8f68cb]/10 flex items-center justify-center">
+                        <ArrowUpCircle className="h-5 w-5 text-[#8f68cb]" />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-foreground">
+                        {formatNumber(uniquePlates.out)}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Unique Plates (Out)
+                    </p>
+                    <div className="mt-3 flex items-center gap-1 text-xs">
+                        {changes && changes.uniquePlatesOut >= 0 ? (
+                            <>
+                                <TrendingUp className="h-3 w-3 text-primary" />
+                                <span className="text-foreground">
+                                    +{Math.abs(changes.uniquePlatesOut)}%
+                                </span>
+                            </>
+                        ) : changes ? (
+                            <>
+                                <TrendingDown className="h-3 w-3 text-destructive" />
+                                <span className="text-foreground">
+                                    {changes.uniquePlatesOut}%
+                                </span>
+                            </>
+                        ) : null}
+                    </div>
+
+                </CardContent>
+            </Card>
+
+            {/* Total Vehicles */}
+            <Card className="bg-card">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#14bac4]/10 flex items-center justify-center">
+                        <Car className="h-5 w-5 text-[#14bac4]" />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-foreground">
+                        {formatNumber(totalCounts.in + totalCounts.out)}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Total Vehicles
+                    </p>
+                    <div className="mt-3 flex items-center gap-1 text-xs">
+                        {changes && changes.totalCount >= 0 ? (
+                            <>
+                                <TrendingUp className="h-3 w-3 text-primary" />
+                                <span className="text-foreground">
+                                    +{Math.abs(changes.totalCount)}%
+                                </span>
+                            </>
+                        ) : changes ? (
+                            <>
+                                <TrendingDown className="h-3 w-3 text-destructive" />
+                                <span className="text-foreground">
+                                    {changes.totalCount}%
+                                </span>
+                            </>
+                        ) : null}
+                    </div>
+
+                </CardContent>
+            </Card>
+
+            {/* Daily Activity */}
+            <Card className="bg-card">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#ccc072]/10 flex items-center justify-center">
+                        <Activity className="h-5 w-5 text-[#ccc072]" />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-foreground">
+                        {formatNumber(dailyCounts.in + dailyCounts.out)}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Daily Activity
+                    </p>
+                    <div className="mt-3 flex items-center gap-1 text-xs">
+                        <TrendingUp className="h-3 w-3 text-primary" />
+                        <span className="text-foreground">Active</span>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Weekly Activity */}
+            <Card className="bg-card">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#4d5f9c]/10 flex items-center justify-center">
+                        <Car className="h-5 w-5 text-[#4d5f9c]" />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-foreground">
+                        {formatNumber(weeklyCounts.in + weeklyCounts.out)}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Weekly Activity
+                    </p>
+                    <div className="mt-3 flex items-center gap-1 text-xs">
+                        <TrendingUp className="h-3 w-3 text-primary" />
+                        <span className="text-foreground">Last 4 weeks</span>
+                    </div>
+                </CardContent>
+            </Card>
+
+
+
         </div>
     );
 }

@@ -59,6 +59,11 @@ interface DashboardProps {
         start: string;
         end: string;
     };
+    changes?: {
+        uniquePlatesIn: number;
+        uniquePlatesOut: number;
+        totalCount: number;
+    };
 }
 
 export default function Dashboard({
@@ -69,6 +74,7 @@ export default function Dashboard({
     vehicleTypeData,
     totalCounts,
     dateRange,
+    changes,
 }: DashboardProps) {
     // Calculate totals for daily, weekly, monthly
     const dailyTotals = useMemo(() => {
@@ -135,6 +141,7 @@ export default function Dashboard({
                     dailyCounts={dailyTotals}
                     weeklyCounts={weeklyTotals}
                     monthlyCounts={monthlyTotals}
+                    changes={changes}
                 />
 
                 {/* Date Filter */}

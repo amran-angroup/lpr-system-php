@@ -88,6 +88,43 @@ class DashboardController extends Controller
             ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
             ->count();
 
+        // Calculate period duration for comparison
+        $startDate = Carbon::parse($dateStart);
+        $endDate = Carbon::parse($dateEnd);
+        $daysDiff = $startDate->diffInDays($endDate);
+        
+        // Previous period for comparison
+        $prevDateStart = $startDate->copy()->subDays($daysDiff + 1)->format('Y-m-d');
+        $prevDateEnd = $startDate->copy()->subDay()->format('Y-m-d');
+
+        $prevUniquePlatesIn = VehicleLog::where('direction', 'in')
+            ->whereNotNull('plate_text')
+            ->whereBetween('timestamp', [$prevDateStart . ' 00:00:00', $prevDateEnd . ' 23:59:59'])
+            ->select('plate_text')
+            ->distinct()
+            ->count();
+
+        $prevUniquePlatesOut = VehicleLog::where('direction', 'out')
+            ->whereNotNull('plate_text')
+            ->whereBetween('timestamp', [$prevDateStart . ' 00:00:00', $prevDateEnd . ' 23:59:59'])
+            ->select('plate_text')
+            ->distinct()
+            ->count();
+
+        $prevTotalIn = VehicleLog::where('direction', 'in')
+            ->whereBetween('timestamp', [$prevDateStart . ' 00:00:00', $prevDateEnd . ' 23:59:59'])
+            ->count();
+
+        $prevTotalOut = VehicleLog::where('direction', 'out')
+            ->whereBetween('timestamp', [$prevDateStart . ' 00:00:00', $prevDateEnd . ' 23:59:59'])
+            ->count();
+
+        // Calculate percentage changes
+        $calculateChange = function($current, $previous) {
+            if ($previous == 0) return $current > 0 ? 100 : 0;
+            return round((($current - $previous) / $previous) * 100);
+        };
+
         return Inertia::render('dashboard', [
             'uniquePlates' => [
                 'in' => $uniquePlatesIn,
@@ -104,6 +141,11 @@ class DashboardController extends Controller
             'dateRange' => [
                 'start' => $dateStart,
                 'end' => $dateEnd,
+            ],
+            'changes' => [
+                'uniquePlatesIn' => $calculateChange($uniquePlatesIn, $prevUniquePlatesIn),
+                'uniquePlatesOut' => $calculateChange($uniquePlatesOut, $prevUniquePlatesOut),
+                'totalCount' => $calculateChange($totalIn + $totalOut, $prevTotalIn + $prevTotalOut),
             ],
         ]);
     }

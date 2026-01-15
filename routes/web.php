@@ -6,16 +6,12 @@ use App\Http\Controllers\OcrController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\VehicleLogsController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
 Route::get('test', [TestController::class, 'index'])->name('test.index');
 
 
 Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
+    return redirect()->route('dashboard');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
