@@ -83,9 +83,12 @@ export function AppSidebar() {
                     <SidebarGroupLabel className="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         MENU
                     </SidebarGroupLabel>
+
+
                     <SidebarMenu>
                         {menuNavItems.map((item) => {
-                            const active = isActive(item.href);
+                            const active = isActive(item.href)
+
                             return (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton
@@ -93,45 +96,27 @@ export function AppSidebar() {
                                         isActive={active}
                                         tooltip={{ children: item.title }}
                                         className={cn(
-                                            "w-full justify-start gap-3 rounded-lg px-3 py-2.5",
-                                            active
-                                                ? "text-white"
-                                                : "text-gray-700 dark:text-gray-300"
+                                            "group w-full justify-start gap-3 rounded-lg px-3 py-2.5 transition-colors",
+                                            "text-gray-700 hover:bg-[rgba(5,170,155,0.1)] hover:text-[#05aa9b]",
+                                            "dark:text-gray-300",
+                                            "data-[active=true]:bg-[#05aa9b]",
+                                            "data-[active=true]:text-white"
                                         )}
-                                        style={active ? { backgroundColor: '#05aa9b' } : {}}
                                     >
-                                        <Link 
-                                            href={item.href} 
-                                            prefetch 
-                                            className={cn(
-                                                "flex items-center gap-3 w-full",
-                                                !active && "hover:opacity-80"
-                                            )}
-                                            onMouseEnter={(e) => {
-                                                if (!active) {
-                                                    const parent = e.currentTarget.closest('button');
-                                                    if (parent) {
-                                                        parent.style.backgroundColor = 'rgba(5, 170, 155, 0.1)';
-                                                        parent.style.color = '#05aa9b';
-                                                    }
-                                                }
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                if (!active) {
-                                                    const parent = e.currentTarget.closest('button');
-                                                    if (parent) {
-                                                        parent.style.backgroundColor = '';
-                                                        parent.style.color = '';
-                                                    }
-                                                }
-                                            }}
+                                        <Link
+                                            href={item.href}
+                                            prefetch
+                                            className="flex w-full items-center gap-3 text-inherit"
                                         >
-                                            {item.icon && <item.icon className="h-5 w-5" />}
-                                            <span>{item.title}</span>
+                                            {item.icon && (
+                                                <item.icon className="h-5 w-5 shrink-0 text-inherit" aria-hidden="true" />
+                                            )}
+                                            {item.title}
                                         </Link>
                                     </SidebarMenuButton>
+
                                 </SidebarMenuItem>
-                            );
+                            )
                         })}
                     </SidebarMenu>
                 </SidebarGroup>

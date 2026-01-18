@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
     ChartContainer,
     ChartTooltip,
@@ -9,14 +9,16 @@ import {
     type ChartConfig,
 } from '@/components/ui/chart';
 
-interface DailyCount {
-    date: string;
+interface HourlyCount {
+    hour: number;
+    hour_label: string;
     in_count: number;
     out_count: number;
+    total_count: number;
 }
 
-interface DailyChartProps {
-    data: DailyCount[];
+interface HourlyTrafficChartProps {
+    data: HourlyCount[];
 }
 
 const chartConfig = {
@@ -30,35 +32,55 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-export function DailyChart({ data }: DailyChartProps) {
-    const [activeChart, setActiveChart] =
-        React.useState<keyof typeof chartConfig>('in');
-
-    const chartData = React.useMemo(() => {
-        return data.map((item) => ({
-            date: item.date,
-            in: item.in_count,
-            out: item.out_count,
-        }));
+export function HourlyTrafficChart({ data }: HourlyTrafficChartProps) {
+    // Ensure all 24 hours are represented (fill missing hours with 0)
+    const completeData = React.useMemo(() => {
+        const hourMap = new Map(
+            data.map((item) => [item.hour, item])
+        );
+        
+        return Array.from({ length: 24 }, (_, hour) => {
+            const existing = hourMap.get(hour);
+            return existing || {
+                hour,
+                hour_label: `${hour.toString().padStart(2, '0')}:00`,
+                in_count: 0,
+                out_count: 0,
+                total_count: 0,
+            };
+        });
     }, [data]);
 
-    const total = React.useMemo(
-        () => ({
-            in: chartData.reduce((acc, curr) => acc + curr.in, 0),
-            out: chartData.reduce((acc, curr) => acc + curr.out, 0),
-        }),
-        [chartData]
-    );
+    const chartData = React.useMemo(() => {
+        return completeData.map((item) => ({
+            hour: item.hour_label,
+            in: item.in_count,
+            out: item.out_count,
+            total: item.total_count,
+        }));
+    }, [completeData]);
+
+    const peakHour = React.useMemo(() => {
+        return completeData.reduce((max, item) => 
+            item.total_count > max.total_count ? item : max,
+            completeData[0] || { hour_label: 'N/A', total_count: 0 }
+        );
+    }, [completeData]);
 
     return (
         <div className="flex flex-col h-full">
             <div className="flex flex-col items-stretch border-b border-gray-200 dark:border-gray-800 sm:flex-row">
                 <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:py-6">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        Daily Vehicle Log
+                        Hourly Traffic Pattern
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Showing vehicle entries and exits by day
+                        Vehicle activity by hour of day
+                        {peakHour.total_count > 0 && (
+                            <span className="ml-2 text-primary font-medium">
+                                Peak: {peakHour.hour_label} ({peakHour.total_count} vehicles)
+                            </span>
+                        )}
                     </p>
                 </div>
             </div>
@@ -67,7 +89,7 @@ export function DailyChart({ data }: DailyChartProps) {
                     config={chartConfig}
                     className="aspect-auto h-[350px] w-full"
                 >
-                    <LineChart
+                    <BarChart
                         accessibilityLayer
                         data={chartData}
                         margin={{
@@ -77,20 +99,15 @@ export function DailyChart({ data }: DailyChartProps) {
                             bottom: 12,
                         }}
                     >
-                        <CartesianGrid vertical={false} />
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" />
                         <XAxis
-                            dataKey="date"
+                            dataKey="hour"
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            minTickGap={32}
-                            tickFormatter={(value) => {
-                                const date = new Date(value);
-                                return date.toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                });
-                            }}
+                            angle={-45}
+                            textAnchor="end"
+                            height={60}
                         />
                         <YAxis
                             tickLine={false}
@@ -98,39 +115,26 @@ export function DailyChart({ data }: DailyChartProps) {
                             tickMargin={8}
                         />
                         <ChartTooltip
-                            cursor={{ strokeDasharray: '3 3' }}
+                            cursor={{ opacity: 0.2 }}
                             content={
                                 <ChartTooltipContent
-                                    labelFormatter={(value) => {
-                                        return new Date(value).toLocaleDateString(
-                                            'en-US',
-                                            {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                year: 'numeric',
-                                            }
-                                        );
-                                    }}
+                                    labelFormatter={(value) => `Hour: ${value}`}
                                 />
                             }
                         />
-                        <Line
+                        <Bar
                             dataKey="in"
-                            type="monotone"
-                            stroke="var(--color-in)"
-                            strokeWidth={2}
-                            dot={false}
-                            activeDot={{ r: 4 }}
+                            stackId="traffic"
+                            fill="var(--color-in)"
+                            radius={[0, 0, 0, 0]}
                         />
-                        <Line
+                        <Bar
                             dataKey="out"
-                            type="monotone"
-                            stroke="var(--color-out)"
-                            strokeWidth={2}
-                            dot={false}
-                            activeDot={{ r: 4 }}
+                            stackId="traffic"
+                            fill="var(--color-out)"
+                            radius={[4, 4, 0, 0]}
                         />
-                    </LineChart>
+                    </BarChart>
                 </ChartContainer>
             </div>
             <div className="border-t border-gray-200 dark:border-gray-800 px-6 py-4">

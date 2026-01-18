@@ -6,10 +6,6 @@ interface StatsCardsProps {
         in: number;
         out: number;
     };
-    totalCounts: {
-        in: number;
-        out: number;
-    };
     dailyCounts: {
         in: number;
         out: number;
@@ -31,7 +27,6 @@ interface StatsCardsProps {
 
 export function StatsCards({
     uniquePlates,
-    totalCounts,
     dailyCounts,
     weeklyCounts,
     monthlyCounts,
@@ -115,41 +110,6 @@ export function StatsCards({
                 </CardContent>
             </Card>
 
-            {/* Total Vehicles */}
-            <Card className="bg-card">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <div className="h-10 w-10 rounded-full bg-[#14bac4]/10 flex items-center justify-center">
-                        <Car className="h-5 w-5 text-[#14bac4]" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold text-foreground">
-                        {formatNumber(totalCounts.in + totalCounts.out)}
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        Total Vehicles
-                    </p>
-                    <div className="mt-3 flex items-center gap-1 text-xs">
-                        {changes && changes.totalCount >= 0 ? (
-                            <>
-                                <TrendingUp className="h-3 w-3 text-primary" />
-                                <span className="text-foreground">
-                                    +{Math.abs(changes.totalCount)}%
-                                </span>
-                            </>
-                        ) : changes ? (
-                            <>
-                                <TrendingDown className="h-3 w-3 text-destructive" />
-                                <span className="text-foreground">
-                                    {changes.totalCount}%
-                                </span>
-                            </>
-                        ) : null}
-                    </div>
-
-                </CardContent>
-            </Card>
-
             {/* Daily Activity */}
             <Card className="bg-card">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -189,6 +149,41 @@ export function StatsCards({
                         <TrendingUp className="h-3 w-3 text-primary" />
                         <span className="text-foreground">Last 4 weeks</span>
                     </div>
+                </CardContent>
+            </Card>
+
+            {/* Monthly Activity */}
+            <Card className="bg-card">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#14bac4]/10 flex items-center justify-center">
+                        <Car className="h-5 w-5 text-[#14bac4]" />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-foreground">
+                        {formatNumber(monthlyCounts.in + monthlyCounts.out)}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                       Monthly Activity
+                    </p>
+                    <div className="mt-3 flex items-center gap-1 text-xs">
+                        {changes && changes.totalCount >= 0 ? (
+                            <>
+                                <TrendingUp className="h-3 w-3 text-primary" />
+                                <span className="text-foreground">
+                                    +{Math.abs(changes.totalCount)}%
+                                </span>
+                            </>
+                        ) : changes ? (
+                            <>
+                                <TrendingDown className="h-3 w-3 text-destructive" />
+                                <span className="text-foreground">
+                                    {changes.totalCount}%
+                                </span>
+                            </>
+                        ) : null}
+                    </div>
+
                 </CardContent>
             </Card>
 

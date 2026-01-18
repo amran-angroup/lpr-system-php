@@ -125,6 +125,71 @@ class DashboardController extends Controller
             return round((($current - $previous) / $previous) * 100);
         };
 
+        // Hourly traffic pattern (for the selected date range)
+        $hourlyCounts = VehicleLog::select(
+            DB::raw('HOUR(timestamp) as hour'),
+            DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
+            DB::raw('COUNT(CASE WHEN direction = "out" THEN 1 END) as out_count'),
+            DB::raw('COUNT(*) as total_count')
+        )
+            ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
+            ->groupBy('hour')
+            ->orderBy('hour', 'asc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'hour' => (int) $item->hour,
+                    'hour_label' => sprintf('%02d:00', $item->hour),
+                    'in_count' => (int) $item->in_count,
+                    'out_count' => (int) $item->out_count,
+                    'total_count' => (int) $item->total_count,
+                ];
+            });
+
+        // Top license plates (most frequent vehicles)
+        $topLicensePlates = VehicleLog::select(
+            'plate_text',
+            DB::raw('COUNT(*) as total_count'),
+            DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
+            DB::raw('COUNT(CASE WHEN direction = "out" THEN 1 END) as out_count'),
+            DB::raw('MAX(timestamp) as last_seen')
+        )
+            ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
+            ->whereNotNull('plate_text')
+            ->groupBy('plate_text')
+            ->orderBy('total_count', 'desc')
+            ->limit(20)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'plate_text' => $item->plate_text,
+                    'total_count' => (int) $item->total_count,
+                    'in_count' => (int) $item->in_count,
+                    'out_count' => (int) $item->out_count,
+                    'last_seen' => $item->last_seen,
+                ];
+            });
+
+        // Recent activity feed (last 20 entries)
+        $recentActivity = VehicleLog::with('alarm')
+            ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
+            ->whereNotNull('plate_text')
+            ->orderBy('timestamp', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'plate_text' => $item->plate_text,
+                    'vehicle_type' => $item->vehicle_type,
+                    'vehicle_color' => $item->vehicle_color,
+                    'direction' => $item->direction,
+                    'timestamp' =>$item->timestamp->format('Y-m-d h:i:s A'),
+                    'confidence' => $item->confidence ? (float) $item->confidence : null,
+                    'gate_id' => $item->gate_id,
+                ];
+            });
+
         return Inertia::render('dashboard', [
             'uniquePlates' => [
                 'in' => $uniquePlatesIn,
@@ -147,6 +212,9 @@ class DashboardController extends Controller
                 'uniquePlatesOut' => $calculateChange($uniquePlatesOut, $prevUniquePlatesOut),
                 'totalCount' => $calculateChange($totalIn + $totalOut, $prevTotalIn + $prevTotalOut),
             ],
+            'hourlyCounts' => $hourlyCounts,
+            'topLicensePlates' => $topLicensePlates,
+            'recentActivity' => $recentActivity,
         ]);
     }
 }
