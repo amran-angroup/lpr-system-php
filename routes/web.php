@@ -8,6 +8,7 @@ use App\Http\Controllers\VehicleLogsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('test', [TestController::class, 'index'])->name('test.index');
+Route::get('test/image-proxy', [TestController::class, 'proxyImage'])->name('test.image-proxy');
 
 
 Route::get('/', function () {
