@@ -105,7 +105,6 @@ export default function Dashboard({
     weeklyCounts,
     monthlyCounts,
     vehicleTypeData,
-    totalCounts,
     dateRange,
     changes,
     hourlyCounts = [],

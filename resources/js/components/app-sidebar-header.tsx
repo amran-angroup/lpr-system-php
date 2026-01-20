@@ -7,7 +7,6 @@ import { Search, Mail, Bell, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
-import { useInitials } from '@/hooks/use-initials';
 
 export function AppSidebarHeader({
     breadcrumbs = [],
@@ -15,8 +14,6 @@ export function AppSidebarHeader({
     breadcrumbs?: BreadcrumbItemType[];
 }) {
     const page = usePage<SharedData>();
-    const { auth } = page.props;
-    const getInitials = useInitials();
 
     return (
         <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-gray-200 px-6 transition-[width,height] ease-linear dark:border-gray-800 dark:bg-gray-900 md:px-4">

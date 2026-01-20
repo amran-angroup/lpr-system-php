@@ -29,7 +29,7 @@ interface ColumnDef<T> {
     cell?: (row: T) => React.ReactNode
 }
 
-export function DataTable<T extends Record<string, any>>({
+export function DataTable<T extends Record<string, unknown>>({
     data,
     columns,
     searchPlaceholder = "Search...",
@@ -50,7 +50,7 @@ export function DataTable<T extends Record<string, any>>({
             startDate: searchParams.get(`${dateFilterKey}_start`) || "",
             endDate: searchParams.get(`${dateFilterKey}_end`) || "",
         }
-    }, []) // Only compute once on mount
+    }, [searchKey, dateFilterKey]) // Only compute once on mount
 
     const [searchQuery, setSearchQuery] = React.useState(initialParams.search)
     const [startDate, setStartDate] = React.useState(() => {
@@ -83,7 +83,7 @@ export function DataTable<T extends Record<string, any>>({
     })
 
     const updateFilters = React.useCallback(() => {
-        const params: Record<string, any> = {}
+        const params: Record<string, string> = {}
         
         if (searchQuery) {
             params[searchKey] = searchQuery
@@ -113,7 +113,7 @@ export function DataTable<T extends Record<string, any>>({
         }, 500)
 
         return () => clearTimeout(timer)
-    }, [searchQuery])
+    }, [searchQuery, updateFilters])
 
     const handleDateChange = () => {
         updateFilters()

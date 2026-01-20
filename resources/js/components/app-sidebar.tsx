@@ -14,7 +14,7 @@ import { dashboard } from '@/routes';
 import alarms from '@/routes/alarms';
 import vehicleLogs from '@/routes/vehicle-logs';
 import { type NavItem } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     LayoutGrid,
     Bell,
@@ -50,9 +50,6 @@ const menuNavItems: NavItem[] = [
 
 export function AppSidebar() {
     const page = usePage();
-    const handleLogout = () => {
-        router.post('/logout');
-    };
 
     const isActive = (href: string | { url: string }) => {
         const url = typeof href === 'string' ? href : href.url;

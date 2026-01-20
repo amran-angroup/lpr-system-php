@@ -31,9 +31,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function DailyChart({ data }: DailyChartProps) {
-    const [activeChart, setActiveChart] =
-        React.useState<keyof typeof chartConfig>('in');
-
     const chartData = React.useMemo(() => {
         return data.map((item) => ({
             date: item.date,
@@ -41,14 +38,6 @@ export function DailyChart({ data }: DailyChartProps) {
             out: item.out_count,
         }));
     }, [data]);
-
-    const total = React.useMemo(
-        () => ({
-            in: chartData.reduce((acc, curr) => acc + curr.in, 0),
-            out: chartData.reduce((acc, curr) => acc + curr.out, 0),
-        }),
-        [chartData]
-    );
 
     return (
         <div className="flex flex-col h-full">

@@ -38,8 +38,6 @@ const COLORS_DARK = [
     'oklch(0.645 0.246 16.439)',
 ];
 
-const chartConfig = {} satisfies ChartConfig;
-
 export function VehicleTypeChart({ data }: VehicleTypeChartProps) {
     const [isDark, setIsDark] = React.useState(false);
     
@@ -81,8 +79,17 @@ export function VehicleTypeChart({ data }: VehicleTypeChartProps) {
         return config;
     }, [chartData]);
 
-    const renderLabel = React.useCallback((props: any) => {
-        const { cx, cy, midAngle, innerRadius, outerRadius, name, percent } = props;
+    interface LabelProps {
+        cx: number;
+        cy: number;
+        midAngle: number;
+        outerRadius: number;
+        name: string;
+        percent: number;
+    }
+
+    const renderLabel = React.useCallback((props: LabelProps) => {
+        const { cx, cy, midAngle, outerRadius, name, percent } = props;
         const dataEntry = chartData.find((item) => item.name === name);
         const fill = dataEntry?.fill || colors[0];
         const RADIAN = Math.PI / 180;
