@@ -25,6 +25,7 @@ interface Alarm {
     customer_info: string | null;
     created_at: string;
     updated_at: string;
+    [key: string]: unknown;
 }
 
 interface PaginatedAlarms {
@@ -137,10 +138,6 @@ export default function AlarmsIndex({ alarms, success, error }: AlarmsIndexProps
                             accessorKey: 'id',
                         },
                         {
-                            header: 'Alarm ID',
-                            accessorKey: 'alarmId',
-                        },
-                        {
                             header: 'Name',
                             accessorKey: 'alarm_name',
                         },
@@ -151,34 +148,16 @@ export default function AlarmsIndex({ alarms, success, error }: AlarmsIndexProps
                         {
                             header: 'Time',
                             accessorKey: 'alarm_time',
-                            cell: (row) => formatDate(row.alarm_time),
+                            cell: (row) => formatDate(Number(row.alarm_time)),
                         },
-                        {
-                            header: 'Device',
-                            accessorKey: 'device_serial',
-                        },
-                        {
-                            header: 'Status',
-                            accessorKey: 'is_checked',
-                            cell: (row) => (
-                                <span
-                                    className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                                        row.is_checked
-                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                    }`}
-                                >
-                                    {row.is_checked ? 'Checked' : 'Unchecked'}
-                                </span>
-                            ),
-                        },
+
                         {
                             header: 'Image',
                             accessorKey: 'alarm_pic_url',
                             cell: (row) =>
                                 row.alarm_pic_url ? (
                                     <img
-                                        src={row.alarm_pic_url}
+                                        src={row.alarm_pic_url as string}
                                         alt={`Alarm ${row.alarmId}`}
                                         className="h-16 w-16 rounded object-cover"
                                     />
@@ -199,7 +178,7 @@ export default function AlarmsIndex({ alarms, success, error }: AlarmsIndexProps
                             ),
                         },
                     ]}
-                    searchPlaceholder="Search by Alarm ID, Name, or Device..."
+                    searchPlaceholder="Search by, Name, or Device..."
                     searchKey="search"
                     dateFilterKey="date"
                     dateFilterLabel="Alarm Time"
@@ -241,11 +220,10 @@ export default function AlarmsIndex({ alarms, success, error }: AlarmsIndexProps
                                         <Link
                                             key={index}
                                             href={link.url || '#'}
-                                            className={`inline-flex items-center justify-center rounded-md border border-input px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground ${
-                                                link.active
+                                            className={`inline-flex items-center justify-center rounded-md border border-input px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground ${link.active
                                                     ? 'bg-primary text-primary-foreground'
                                                     : 'bg-background'
-                                            }`}
+                                                }`}
                                         >
                                             {link.label}
                                         </Link>

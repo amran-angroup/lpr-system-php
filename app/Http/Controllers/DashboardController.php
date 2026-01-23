@@ -19,6 +19,7 @@ class DashboardController extends Controller
         // Unique plate numbers for in and out
         $uniquePlatesIn = VehicleLog::where('direction', 'in')
             ->whereNotNull('plate_text')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
             ->select('plate_text')
             ->distinct()
@@ -26,36 +27,43 @@ class DashboardController extends Controller
 
         $uniquePlatesOut = VehicleLog::where('direction', 'out')
             ->whereNotNull('plate_text')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
             ->select('plate_text')
             ->distinct()
             ->count();
 
         // Daily counts
-        $dailyCounts = VehicleLog::select(
-            DB::raw('DATE(timestamp) as date'),
-            DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
-            DB::raw('COUNT(CASE WHEN direction = "out" THEN 1 END) as out_count')
-        )
+        $dailyCounts = VehicleLog::whereNotIn('plate_text', ['UNKNOWN', '1234'])
+            ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
+            ->select(
+                DB::raw('DATE(timestamp) as date'),
+                DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
+                DB::raw('COUNT(CASE WHEN direction = "out" THEN 1 END) as out_count')
+            )
             ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get();
 
         // Weekly counts (last 4 weeks)
-        $weeklyCounts = VehicleLog::select(
-            DB::raw('YEARWEEK(timestamp, 1) as week'),
-            DB::raw('MIN(DATE(timestamp)) as week_start'),
-            DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
-            DB::raw('COUNT(CASE WHEN direction = "out" THEN 1 END) as out_count')
-        )
+        $weeklyCounts = VehicleLog::whereNotIn('plate_text', ['UNKNOWN', '1234'])
+            ->whereBetween('timestamp', [Carbon::now()->subWeeks(4)->startOfWeek()->format('Y-m-d H:i:s'), $dateEnd . ' 23:59:59'])
+            ->select(
+                DB::raw('YEARWEEK(timestamp, 1) as week'),
+                DB::raw('MIN(DATE(timestamp)) as week_start'),
+                DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
+                DB::raw('COUNT(CASE WHEN direction = "out" THEN 1 END) as out_count')
+            )
             ->whereBetween('timestamp', [Carbon::now()->subWeeks(4)->startOfWeek()->format('Y-m-d H:i:s'), $dateEnd . ' 23:59:59'])
             ->groupBy('week')
             ->orderBy('week', 'asc')
             ->get();
 
         // Monthly counts (last 6 months)
-        $monthlyCounts = VehicleLog::select(
+        $monthlyCounts = VehicleLog::whereNotIn('plate_text', ['UNKNOWN', '1234'])
+            ->whereBetween('timestamp', [Carbon::now()->subMonths(6)->startOfMonth()->format('Y-m-d H:i:s'), $dateEnd . ' 23:59:59'])
+            ->select(
             DB::raw('DATE_FORMAT(timestamp, "%Y-%m") as month'),
             DB::raw('DATE_FORMAT(timestamp, "%b %Y") as month_label'),
             DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
@@ -67,7 +75,9 @@ class DashboardController extends Controller
             ->get();
 
         // Vehicle type category chart data
-        $vehicleTypeData = VehicleLog::select(
+        $vehicleTypeData = VehicleLog::whereNotIn('plate_text', ['UNKNOWN', '1234'])
+            ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
+            ->select(
             'vehicle_type',
             DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
             DB::raw('COUNT(CASE WHEN direction = "out" THEN 1 END) as out_count'),
@@ -81,10 +91,12 @@ class DashboardController extends Controller
 
         // Total counts for the period
         $totalIn = VehicleLog::where('direction', 'in')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
             ->count();
 
         $totalOut = VehicleLog::where('direction', 'out')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
             ->count();
 
@@ -92,13 +104,14 @@ class DashboardController extends Controller
         $startDate = Carbon::parse($dateStart);
         $endDate = Carbon::parse($dateEnd);
         $daysDiff = $startDate->diffInDays($endDate);
-        
+
         // Previous period for comparison
         $prevDateStart = $startDate->copy()->subDays($daysDiff + 1)->format('Y-m-d');
         $prevDateEnd = $startDate->copy()->subDay()->format('Y-m-d');
 
         $prevUniquePlatesIn = VehicleLog::where('direction', 'in')
             ->whereNotNull('plate_text')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$prevDateStart . ' 00:00:00', $prevDateEnd . ' 23:59:59'])
             ->select('plate_text')
             ->distinct()
@@ -106,27 +119,32 @@ class DashboardController extends Controller
 
         $prevUniquePlatesOut = VehicleLog::where('direction', 'out')
             ->whereNotNull('plate_text')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$prevDateStart . ' 00:00:00', $prevDateEnd . ' 23:59:59'])
             ->select('plate_text')
             ->distinct()
             ->count();
 
         $prevTotalIn = VehicleLog::where('direction', 'in')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$prevDateStart . ' 00:00:00', $prevDateEnd . ' 23:59:59'])
             ->count();
 
         $prevTotalOut = VehicleLog::where('direction', 'out')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$prevDateStart . ' 00:00:00', $prevDateEnd . ' 23:59:59'])
             ->count();
 
         // Calculate percentage changes
-        $calculateChange = function($current, $previous) {
+        $calculateChange = function ($current, $previous) {
             if ($previous == 0) return $current > 0 ? 100 : 0;
             return round((($current - $previous) / $previous) * 100);
         };
 
         // Hourly traffic pattern (for the selected date range)
-        $hourlyCounts = VehicleLog::select(
+        $hourlyCounts = VehicleLog::whereNotIn('plate_text', ['UNKNOWN', '1234'])
+            ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
+            ->select(
             DB::raw('HOUR(timestamp) as hour'),
             DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
             DB::raw('COUNT(CASE WHEN direction = "out" THEN 1 END) as out_count'),
@@ -147,7 +165,9 @@ class DashboardController extends Controller
             });
 
         // Top license plates (most frequent vehicles)
-        $topLicensePlates = VehicleLog::select(
+        $topLicensePlates = VehicleLog::whereNotIn('plate_text', ['UNKNOWN', '1234'])
+            ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
+            ->select(
             'plate_text',
             DB::raw('COUNT(*) as total_count'),
             DB::raw('COUNT(CASE WHEN direction = "in" THEN 1 END) as in_count'),
@@ -172,6 +192,7 @@ class DashboardController extends Controller
 
         // Recent activity feed (last 20 entries)
         $recentActivity = VehicleLog::with('alarm')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234'])
             ->whereBetween('timestamp', [$dateStart . ' 00:00:00', $dateEnd . ' 23:59:59'])
             ->whereNotNull('plate_text')
             ->orderBy('timestamp', 'desc')
@@ -184,7 +205,7 @@ class DashboardController extends Controller
                     'vehicle_type' => $item->vehicle_type,
                     'vehicle_color' => $item->vehicle_color,
                     'direction' => $item->direction,
-                    'timestamp' =>$item->timestamp->format('Y-m-d h:i:s A'),
+                    'timestamp' => $item->timestamp->format('Y-m-d h:i:s A'),
                     'confidence' => $item->confidence ? (float) $item->confidence : null,
                     'gate_id' => $item->gate_id,
                 ];
@@ -218,4 +239,3 @@ class DashboardController extends Controller
         ]);
     }
 }
-

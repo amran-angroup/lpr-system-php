@@ -31,6 +31,7 @@ interface VehicleLog {
         alarmId: string;
         alarm_name: string;
     } | null;
+    [key: string]: unknown;
 }
 
 interface PaginatedVehicleLogs {
@@ -104,16 +105,9 @@ export default function VehicleLogsIndex({ vehicleLogs }: VehicleLogsIndexProps)
                                     <span className="text-muted-foreground">N/A</span>
                                 ),
                         },
+    
                         {
-                            header: 'Gate ID',
-                            accessorKey: 'gate_id',
-                            cell: (row) =>
-                                row.gate_id || (
-                                    <span className="text-muted-foreground">N/A</span>
-                                ),
-                        },
-                        {
-                            header: 'Alarm',
+                            header: 'Camera',
                             accessorKey: 'alarm',
                             cell: (row) =>
                                 row.alarm ? (
@@ -126,34 +120,6 @@ export default function VehicleLogsIndex({ vehicleLogs }: VehicleLogsIndexProps)
                                 ) : (
                                     <span className="text-muted-foreground">N/A</span>
                                 ),
-                        },
-                        {
-                            header: 'Image',
-                            accessorKey: 'image_path',
-                            cell: (row) => {
-                                if (row.image_path) {
-                                    return (
-                                        <img
-                                            src={`data:image/jpeg;base64,${row.image_path}`}
-                                            alt={`Vehicle log ${row.id}`}
-                                            className="h-16 w-16 rounded object-cover"
-                                            onError={(e) => {
-                                                e.currentTarget.style.display = 'none';
-                                            }}
-                                        />
-                                    );
-                                }
-                                if (row.plate_image_base64) {
-                                    return (
-                                        <img
-                                            src={`data:image/png;base64,${row.plate_image_base64}`}
-                                            alt={`Plate ${row.id}`}
-                                            className="h-16 w-16 rounded object-cover"
-                                        />
-                                    );
-                                }
-                                return <span className="text-muted-foreground">No image</span>;
-                            },
                         },
                         {
                             header: 'Action',

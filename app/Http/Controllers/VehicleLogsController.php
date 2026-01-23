@@ -12,6 +12,7 @@ class VehicleLogsController extends Controller
     {
         $perPage = $request->get('per_page', 30);
         $query = VehicleLog::with('alarm')
+            ->whereNotIn('plate_text', ['UNKNOWN', '1234', 'N/A'])
             ->where('confidence', '>', 0.5);
 
         // Search functionality

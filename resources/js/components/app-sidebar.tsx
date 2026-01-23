@@ -19,11 +19,6 @@ import {
     LayoutGrid,
     Bell,
     Calendar,
-    BarChart3,
-    Users,
-    Settings,
-    HelpCircle,
-    LogOut,
 } from 'lucide-react';
 import { resolveUrl } from '@/lib/utils';
 import { cn } from '@/lib/utils';

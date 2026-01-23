@@ -79,31 +79,53 @@ export default function VehicleLogsShow({ vehicleLog }: VehicleLogsShowProps) {
                 <div className="grid gap-6 md:grid-cols-2">
                     {/* Image Section */}
                     <div className="space-y-4">
-                        <h2 className="text-lg font-semibold">Vehicle Image</h2>
-                        {vehicleLog.image_path ? (
-                            <div className="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-                                <img
-                                    src={`data:image/jpeg;base64,${vehicleLog.image_path}`}
-                                    alt={`Vehicle log ${vehicleLog.id}`}
-                                    className="w-full h-auto object-contain"
-                                    onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                    }}
-                                />
-                            </div>
-                        ) : vehicleLog.plate_image_base64 ? (
-                            <div className="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-                                <img
-                                    src={`data:image/png;base64,${vehicleLog.plate_image_base64}`}
-                                    alt={`Plate ${vehicleLog.id}`}
-                                    className="w-full h-auto object-contain"
-                                />
-                            </div>
-                        ) : (
-                            <div className="flex h-64 items-center justify-center rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-muted/50">
-                                <span className="text-muted-foreground">No image available</span>
-                            </div>
-                        )}
+                        <h2 className="text-lg font-semibold">Vehicle Images</h2>
+                        
+                        {/* Image Path */}
+                        <div className="space-y-2">
+                            <h3 className="text-md font-semibold">Image Path</h3>
+                            {vehicleLog.image_path ? (
+                                <div className="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
+                                    <img
+                                        src={vehicleLog.image_path.startsWith('data:')
+                                            ? vehicleLog.image_path
+                                            : `data:image/png;base64,${vehicleLog.image_path}`}
+                                        alt={`Vehicle log ${vehicleLog.id}`}
+                                        className="w-full h-auto object-contain"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                        }}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="flex h-64 items-center justify-center rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-muted/50">
+                                    <span className="text-muted-foreground">No image available</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Plate Image Base64 */}
+                        <div className="space-y-2">
+                            <h3 className="text-md font-semibold">Plate Image Base64</h3>
+                            {vehicleLog.plate_image_base64 ? (
+                                <div className="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
+                                    <img
+                                        src={vehicleLog.plate_image_base64.startsWith('data:')
+                                            ? vehicleLog.plate_image_base64
+                                            : `data:image/png;base64,${vehicleLog.plate_image_base64}`}
+                                        alt={`Plate ${vehicleLog.id}`}
+                                        className="w-full h-auto object-contain"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                        }}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="flex h-64 items-center justify-center rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-muted/50">
+                                    <span className="text-muted-foreground">No image available</span>
+                                </div>
+                            )}
+                        </div>
                         
                         {/* Cropped Plate Image */}
                         {/* {vehicleLog.cropped_image_path && (
